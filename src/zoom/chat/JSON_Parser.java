@@ -1,6 +1,7 @@
 package zoom.chat;
 
 import java.io.FileReader;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,19 +14,26 @@ public class JSON_Parser {
 
     public static String parseInner(String json, String type) throws Exception {
         // parsing file "JSONExample.json"
-        String email = "";
+        String innerList = "";
         Object obj = new JSONParser().parse(json);
 
         // typecasting obj to JSONObject
         JSONObject jo = (JSONObject) obj;
 
         // get email
-        email = (String) jo.get(type);
-        return email;
+        innerList = (String) jo.get(type);
+        return innerList;
     }
-    public static ArrayList<String> parseOuter(String json, String type1, String type2) throws Exception {
+    public static ArrayList<String> parseOuter(String json, String type1, String type2, String email, LocalDate date) throws Exception {
+        // check if access token still good
+        if (json == "401.Contacts") {
+            json = Contacts.getContacts();
+        }
+        if (json == "401.Messages") {
+            json = Messages.getMessages(email, date);
+        }
         // parsing file "JSONExample.json"
-        ArrayList<String> emailList = new ArrayList<String>();
+        ArrayList<String> outerList = new ArrayList<String>();
         Object obj = new JSONParser().parse(json);
 
         // typecasting obj to JSONObject
@@ -37,9 +45,9 @@ public class JSON_Parser {
         // get json object contact
         Iterator<JSONObject> iterator = jsonArray.iterator();
         while(iterator.hasNext()) {
-            emailList.add(parseInner(iterator.next().toString(), type2));
+            outerList.add(parseInner(iterator.next().toString(), type2));
         }
-        return emailList;
+        return outerList;
     }
 
 }

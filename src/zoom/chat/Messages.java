@@ -15,19 +15,24 @@ public class Messages {
         BufferedReader reader;
         String line;
         StringBuffer responseContent = new StringBuffer();
-        String authToken = "eyJhbGciOiJIUzUxMiIsInYiOiIyLjAiLCJraWQiOiJmNjRiYmE3ZC1iNjNmLTRmNGEtYjZlOC1mNmI4MDc4YWQ2MWQifQ.eyJ2ZXIiOjcsImF1aWQiOiIxNmRmODc4OWE5NTY5NTg3MDJmMmQxNTZmNTJhZTdkNyIsImNvZGUiOiJWOGpDeGZkM0xIX0k2NjdmVFlwU3hPcEIzOUtpczRtZmciLCJpc3MiOiJ6bTpjaWQ6aDJ1ZEJ5b1BUZDJEal9kV0F4dFpYZyIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiJJNjY3ZlRZcFN4T3BCMzlLaXM0bWZnIiwibmJmIjoxNjI1MTgxMjc4LCJleHAiOjE2MjUxODQ4NzgsImlhdCI6MTYyNTE4MTI3OCwiYWlkIjoiMXNIRm9kTnZTcXl4aW9XSDlKOTROZyIsImp0aSI6IjU2Y2M5MTE5LTgyMDgtNDQxZi1iMjI5LTliM2EwYzUwMmY2ZiJ9.11wSt_zLUyZjwk7J96fxXe5T1tpt-VFOf4vvYW4Xk9yFWbXXdFNPeacXrxqAF9Xgpm7Yt2x22FTQKiymUJFBSQ";
+        String accessToken = Authorization.getAccessToken();
         try {
             URL url = new URL("https://api.zoom.us/v2/chat/users/me/messages?to_contact=" + email + "&date=" + date + "&page_size=10");
             connection = (HttpURLConnection) url.openConnection();
 
             //Request setup
-            connection.setRequestProperty("Authorization","Bearer " + authToken);
+            connection.setRequestProperty("Authorization","Bearer " + accessToken);
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
 
             int status = connection.getResponseCode();
 
+            if (status == 401) {
+                Authorization.authorize();
+                System.out.println("401.Messages");
+                return "401.Messages";
+            }
             if (status > 299) {
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
             }

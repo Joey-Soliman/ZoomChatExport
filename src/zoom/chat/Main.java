@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.time.LocalDate;
@@ -20,11 +21,11 @@ public class Main {
         System.out.println("How many days back would you like?");
         Integer days = scanner.nextInt();
         String email;
-        LocalDate today = LocalDate.now(ZoneId.of ("America/Los_Angeles"));
-        ArrayList<String> emailList= JSON_Parser.parseOuter(Contacts.getContacts(), "contacts", "email");
-        Iterator emailIter = emailList.iterator();
-        while (emailIter.hasNext()) {
-            email = (String) emailIter.next();
+        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        ArrayList<String> emailList= JSON_Parser.parseOuter(Contacts.getContacts(), "contacts", "email", "", today);
+        Iterator emailIterator = emailList.iterator();
+        while (emailIterator.hasNext()) {
+            email = (String) emailIterator.next();
             System.out.println(email);
             for (int i = days-1; i > -1; i-- ) {
                 LocalDate date = today.minusDays(i);
@@ -34,10 +35,10 @@ public class Main {
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                 }
-                ArrayList<String> messageList= JSON_Parser.parseOuter(Messages.getMessages(email, date), "messages", "message");
-                Iterator messageIter = messageList.iterator();
-                while (messageIter.hasNext()) {
-                    System.out.println(messageIter.next());
+                ArrayList<String> messageList= JSON_Parser.parseOuter(Messages.getMessages(email, date), "messages", "message", email, date);
+                Iterator messageIterator = messageList.iterator();
+                while (messageIterator.hasNext()) {
+                    System.out.println(messageIterator.next());
                 }
             }
         }
