@@ -1,10 +1,8 @@
 package zoom.chat;
 
-import java.io.FileReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,7 +22,21 @@ public class JSON_Parser {
         innerList = (String) jo.get(type);
         return innerList;
     }
-    public static ArrayList<String> parseOuter(String json, String type1, String type2, String email, LocalDate date) throws Exception {
+
+    public static String parseInner2(String json, String type1, String type2) throws Exception {
+        // parsing file "JSONExample.json"
+        String innerList = "";
+        Object obj = new JSONParser().parse(json);
+
+        // typecasting obj to JSONObject
+        JSONObject jo = (JSONObject) obj;
+
+        // get sender: message
+        innerList = "    " + (String) jo.get(type2) + ": " + (String) jo.get(type1);
+        return innerList;
+    }
+
+    public static ArrayList<String> parseOuter(String json, String type1, String type2, String type3, String email, LocalDate date) throws Exception {
         // check if access token still good
         if (json == "401.Contacts") {
             json = Contacts.getContacts();
@@ -44,8 +56,18 @@ public class JSON_Parser {
 
         // get json object contact
         Iterator<JSONObject> iterator = jsonArray.iterator();
-        while(iterator.hasNext()) {
-            outerList.add(parseInner(iterator.next().toString(), type2));
+
+        // parsing contacts
+        if (type1 == "contacts") {
+            while(iterator.hasNext()) {
+                outerList.add(parseInner(iterator.next().toString(), type2));
+            }
+        }
+        // parsing messages
+        else {
+            while(iterator.hasNext()) {
+                outerList.add(parseInner2(iterator.next().toString(), type2, type3));
+            }
         }
         return outerList;
     }

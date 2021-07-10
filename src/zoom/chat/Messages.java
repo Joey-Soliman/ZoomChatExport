@@ -30,7 +30,6 @@ public class Messages {
 
             if (status == 401) {
                 Authorization.authorize();
-                System.out.println("401.Messages");
                 return "401.Messages";
             }
             if (status > 299) {

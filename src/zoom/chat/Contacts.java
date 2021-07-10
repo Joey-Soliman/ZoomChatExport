@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Contacts {
     private static HttpURLConnection connection;
@@ -31,7 +29,6 @@ public class Contacts {
 
             if (status == 401) {
                 Authorization.authorize();
-                System.out.println("401.Contacts");
                 return "401.Contacts";
             }
             if (status > 299) {
