@@ -37,17 +37,15 @@ public class JSON_Parser {
     }
 
     public static ArrayList<String> parseOuter(String json, String type1, String type2, String type3, String email, LocalDate date) throws Exception {
-        // check if access token still good
-        if (json == "401.Contacts") {
-            json = Contacts.getContacts();
-        }
-        if (json == "401.Messages") {
-            json = Messages.getMessages(email, date);
-        }
         // parsing file "JSONExample.json"
         ArrayList<String> outerList = new ArrayList<String>();
-        Object obj = new JSONParser().parse(json);
 
+        // check if access token still good
+        if (json == "error") {
+            return outerList;
+        }
+
+        Object obj = new JSONParser().parse(json);
         // typecasting obj to JSONObject
         JSONObject jo = (JSONObject) obj;
 

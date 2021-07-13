@@ -30,14 +30,21 @@ public class Messages {
 
             if (status == 401) {
                 Authorization.authorize();
-                return "401.Messages";
+                accessToken = Authorization.getAccessToken();
+                connection.disconnect();
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Authorization","Bearer " + accessToken);
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                status = connection.getResponseCode();
             }
             if (status > 299) {
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                System.out.println(reader);
+                return "error";
             }
-            else {
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            }
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             while((line=reader.readLine()) != null) {
                 responseContent.append(line);
             }
